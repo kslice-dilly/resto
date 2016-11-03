@@ -19,7 +19,7 @@ try:
 
 	api_url_prefix = ("https://maps.googleapis.com/maps/api/geocode/json?region=ca&address=")
 	api_url_suffix = ("&key=" + api_key)
-	sqlGet_records = ("SELECT bus_guid, addr FROM geocode WHERE `lat`=0 AND `long`=0")	
+	sqlGet_records = ("SELECT bus_guid, addr FROM geocode WHERE hit=0")
 	sqlUpdate_coords = ("UPDATE geocode SET `lat` = %3.7f, `long` = %3.7f "
 			    "WHERE bus_guid = UNHEX('%s')")
 	lat = 0
