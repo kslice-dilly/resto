@@ -18,11 +18,12 @@ if (!$db_selected) {
   die ('Can\'t use db : ' . mysql_error());
 }
 
-// Select all the rows in the markers table
-$query = "SELECT DISTINCT(business.name), geocode.addr, geocode.lat, geocode.`long`, inspections.score AS rating, inspections.datetext " .
+$query = "SELECT DISTINCT(business.name), geocode.addr, geocode.lat, geocode.`long`, inspections.score AS rating, " .
+	"CONCAT(SUBSTRING(inspections.datetext, 1, 4), '-', SUBSTRING(inspections.datetext, 5, 2), '-', SUBSTRING(inspections.datetext, 7)) AS datetext " .
 	"FROM geocode " .
 	"JOIN (business, inspections) " .
 	"ON (geocode.bus_guid = business.guid AND inspections.bus_guid = business.guid) " .
+	"WHERE geocode.lat != 0 " .
 	"GROUP BY business.guid " .
 	"ORDER BY inspections.datetext";
 $result = mysql_query($query);
@@ -42,7 +43,19 @@ while ($row = @mysql_fetch_assoc($result)){
   $newnode->setAttribute("lat", $row['lat']);
   $newnode->setAttribute("lng", $row['long']);
   $newnode->setAttribute("rating", $row['rating']);
+  $newnode->setAttribute("last_inspection", $row['datetext']);
+// @todo refactor this so that the guid is used in the query  
+  $inner_query = "SELECT description FROM violations JOIN (business, inspections) ON (inspections.bus_guid = business.guid AND violations.bus_guid = business.guid) WHERE violations.description != '' AND business.name= '" . utf8_encode($row['name']) . "' GROUP BY business.guid ORDER BY inspections.datetext";
+  $inner_result = mysql_query($inner_query);
+  if (mysql_num_rows($inner_result) > 0) {
+    $node = $doc->createElement("violation");
+    $newnode = $newnode->appendChild($node);
+    while ($inner_row = @mysql_fetch_assoc($inner_result)) {
+      $newnode->setAttribute("desc", utf8_encode($inner_row['description']));
+    }
+  }
 }
+;
 
 echo $doc->saveXML();
 ?>

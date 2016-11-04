@@ -39,7 +39,14 @@ var customIcons = {
           var point = new google.maps.LatLng(
               parseFloat(markers[i].getAttribute("lat")),
               parseFloat(markers[i].getAttribute("lng")));
-          var html = "<b>" + markers[i].getAttribute("name") + "</b> <br/>" + address;
+          var violations = new Array();
+          var html = "<b>" + markers[i].getAttribute("name") + "</b> <br/>" + address
+          html += "<br/><b>Last inspection:</b> " + markers[i].getAttribute("last_inspection");
+          html += "<font size=-2>";
+          for (var j = 0; j < markers[i].getElementsByTagName("violation").length; j++) {
+	      html += "<br/>" + markers[i].getElementsByTagName("violation")[j].getAttribute("desc");
+          }
+          html += "</font>";
 	  var type = 'blue';
           if (rating < 100) {
               type = 'red';
