@@ -19,13 +19,14 @@ if (!$db_selected) {
 }
 
 $query = "SELECT DISTINCT(business.name), geocode.addr, geocode.lat, geocode.`long`, inspections.score AS rating, " .
-	"CONCAT(SUBSTRING(inspections.datetext, 1, 4), '-', SUBSTRING(inspections.datetext, 5, 2), '-', SUBSTRING(inspections.datetext, 7)) AS datetext " .
+	"CONCAT(SUBSTRING(MAX(inspections.datetext), 1, 4), '-', " .
+               "SUBSTRING(MAX(inspections.datetext), 5, 2), '-', " .
+               "SUBSTRING(MAX(inspections.datetext), 7)) AS datetext " .
 	"FROM geocode " .
 	"JOIN (business, inspections) " .
 	"ON (geocode.bus_guid = business.guid AND inspections.bus_guid = business.guid) " .
 	"WHERE geocode.lat != 0 " .
-	"GROUP BY business.guid " .
-	"ORDER BY inspections.datetext";
+        "GROUP BY business.guid "
 $result = mysql_query($query);
 if (!$result) {
   die('Invalid query: ' . mysql_error());
@@ -45,13 +46,14 @@ while ($row = @mysql_fetch_assoc($result)){
   $newnode->setAttribute("rating", $row['rating']);
   $newnode->setAttribute("last_inspection", $row['datetext']);
 // @todo refactor this so that the guid is used in the query  
-  $inner_query = "SELECT description FROM violations JOIN (business, inspections) ON (inspections.bus_guid = business.guid AND violations.bus_guid = business.guid) WHERE violations.description != '' AND business.name= '" . utf8_encode($row['name']) . "' GROUP BY business.guid ORDER BY inspections.datetext";
+  $inner_query = "SELECT description, violations.datetext FROM violations JOIN (business, inspections) ON (inspections.bus_guid = business.guid AND violations.bus_guid = business.guid AND violations.datetext = inspections.datetext) WHERE violations.description != '' AND business.name= '" . utf8_encode($row['name']) . "' ORDER BY inspections.datetext";
   $inner_result = mysql_query($inner_query);
-  if (mysql_num_rows($inner_result) > 0) {
-    $node = $doc->createElement("violation");
-    $newnode = $newnode->appendChild($node);
+  if (mysql_num_rows($inner_result) > 0) { // this line throws a warning "expects parameter 1 to be resource, boolean given) @todo fix
     while ($inner_row = @mysql_fetch_assoc($inner_result)) {
+      $node = $doc->createElement("violation");
+      $newnode = $newnode->appendChild($node);
       $newnode->setAttribute("desc", utf8_encode($inner_row['description']));
+      $newnode->setAttribute("date", (substr($inner_row['datetext'],0,4) . '-' . substr($inner_row['datetext'],4,2) . '-' . substr($inner_row['datetext'],6)));
     }
   }
 }
