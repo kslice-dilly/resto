@@ -55,7 +55,7 @@ try:
 		# @refactor to switch?
 		if j['status'] == 'OVER_QUERY_LIMIT':
 			# indicates that the quota has been reached for the current google geocode API key
-			print('Over query limit for ' + api_key[0])
+			print('Over query limit for ' + api_key)
 			exit(124)
 		elif j['status'] == 'INVALID_REQUEST':
 			# generally indicates that the query (address, componentes, latlng) is missing
