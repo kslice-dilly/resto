@@ -42,9 +42,10 @@ var customIcons = {
           var violations = new Array();
           var html = "<b>" + markers[i].getAttribute("name") + "</b> <br/>" + address
           html += "<br/><b>Last inspection:</b> " + markers[i].getAttribute("last_inspection");
-          html += "<font size=-2>";
+          html += '<font size=-2>';
           for (var j = 0; j < markers[i].getElementsByTagName("violation").length; j++) {
-	      html += "<br/>" + markers[i].getElementsByTagName("violation")[j].getAttribute("desc");
+	      html += "<br/><u>" + markers[i].getElementsByTagName("violation")[j].getAttribute("date") + "</u> ";
+              html += markers[i].getElementsByTagName("violation")[j].getAttribute("desc");
           }
           html += "</font>";
 	  var type = 'blue';
