@@ -26,7 +26,7 @@ $query = "SELECT DISTINCT(business.name), geocode.addr, geocode.lat, geocode.`lo
 	"JOIN (business, inspections) " .
 	"ON (geocode.bus_guid = business.guid AND inspections.bus_guid = business.guid) " .
 	"WHERE geocode.lat != 0 " .
-        "GROUP BY business.guid "
+        "GROUP BY business.guid ";
 $result = mysql_query($query);
 if (!$result) {
   die('Invalid query: ' . mysql_error());
