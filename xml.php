@@ -18,6 +18,7 @@ if (!$db_selected) {
   die ('Can\'t use db : ' . mysql_error());
 }
 
+// SQL query to get business name, address, co-ordinates and last inspection date.
 $query = "SELECT DISTINCT(business.name), geocode.addr, geocode.lat, geocode.`long`, inspections.score AS rating, " .
 	"CONCAT(SUBSTRING(MAX(inspections.datetext), 1, 4), '-', " .
                "SUBSTRING(MAX(inspections.datetext), 5, 2), '-', " .
@@ -48,7 +49,10 @@ while ($row = @mysql_fetch_assoc($result)){
 // @todo refactor this so that the guid is used in the query  
   $inner_query = "SELECT description, violations.datetext FROM violations JOIN (business, inspections) ON (inspections.bus_guid = business.guid AND violations.bus_guid = business.guid AND violations.datetext = inspections.datetext) WHERE violations.description != '' AND business.name= '" . utf8_encode($row['name']) . "' ORDER BY inspections.datetext";
   $inner_result = mysql_query($inner_query);
-  if (mysql_num_rows($inner_result) > 0) { // this line throws a warning "expects parameter 1 to be resource, boolean given) @todo fix
+  if ($inner_result === FALSE) {
+      $inner_query = '';
+      // do nothing with no violations
+  } else if (mysql_num_rows($inner_result) > 0) { // this line throws a warning "expects parameter 1 to be resource, boolean given) @todo fix
     while ($inner_row = @mysql_fetch_assoc($inner_result)) {
       $node = $doc->createElement("violation");
       $newnode = $newnode->appendChild($node);
@@ -58,6 +62,6 @@ while ($row = @mysql_fetch_assoc($result)){
   }
 }
 ;
-
+// output XML
 echo $doc->saveXML();
 ?>
