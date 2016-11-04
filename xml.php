@@ -1,5 +1,6 @@
 <?php
 require("db_cred.php");
+// db_cred.php defines $username, $password and $database
 
 // Start XML file; create parent node
 $doc = new DOMDocument("1.0", "utf-8");
