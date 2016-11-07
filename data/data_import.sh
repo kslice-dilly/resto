@@ -1,6 +1,6 @@
 #!/bin/bash
-SQLUSER=yoshi
-SQLPASSWORD=500163025501
+SQLUSER=
+SQLPASSWORD=
 DB=resto2
 
 mysql -u $SQLUSER -p $SQLPASSWORD < data_import.sql
