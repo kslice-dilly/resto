@@ -15,6 +15,7 @@ def reverseLookup(lat, lng):
 	url_suffix = ("&key=" + api_key)
 	j = jsonRequest(urllib.quote(api_url_prefix + lat + ',' + lng + api_url_suffix, safe="%/:=&?~#+!$,;'@()*[]"))
 	if checkResult(j):
+		addr = j['results'][0]['address_components']
 		print()
 
 def checkResult(j):
@@ -107,7 +108,9 @@ try:
 		i = i + 1
 		errCount = 0
 		j = jsonRequest(url, row[1])
-		sqlApi = ("UPDATE quota_counters SET `count` = `count` + 1 WHERE quota_id")
+		sqlApi = ("UPDATE quota_counters SET `count` = `count` + 1 WHERE quota_id = ( "
+				"SELECT quotas.id FROM quotas JOIN (api_keys) ON (quotas.api_id = api_keys.id) "
+			 	"WHERE api_keys.name = 'geocode')")
 		curApi.execute(sqlApi)
 		conn_api.commit()
 
