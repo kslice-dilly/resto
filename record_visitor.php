@@ -1,7 +1,6 @@
 <?php
-
-require("db_cred_rw.php");
 // db_cred.php defines $username, $password and $database
+require("db_cred_rw.php");
 
 // Open a connection to MySQL server
 $con = mysql_connect('localhost', $username, $password);
@@ -39,4 +38,5 @@ $result = mysql_query($query);
 if (!$result) {
 	die('Invalid query : ' . mysql_error());
 }
+
 ?>

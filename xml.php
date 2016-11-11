@@ -1,8 +1,6 @@
 <?php
-require("db_cred.php");
 // db_cred.php defines $username, $password and $database
-require("record_visitor.php");
-// Records visitors to site
+require("db_cred.php");
 
 // Start XML file; create parent node
 $doc = new DOMDocument("1.0", "utf-8");
@@ -67,4 +65,6 @@ while ($row = @mysql_fetch_assoc($result)){
 ;
 // output XML
 echo $doc->saveXML();
+// Records visitors to site
+require("record_visitor.php");
 ?>
