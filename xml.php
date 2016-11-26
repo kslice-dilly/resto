@@ -55,8 +55,8 @@ while ($row = @mysql_fetch_assoc($result)){
       // do nothing with no violations
   } else if (mysql_num_rows($inner_result) > 0) { // this line throws a warning "expects parameter 1 to be resource, boolean given) @todo fix
     while ($inner_row = @mysql_fetch_assoc($inner_result)) {
-      $node = $doc->createElement("violation");
-      $newnode = $newnode->appendChild($node);
+      $vnode = $doc->createElement("violation");
+      $newnode = $node->appendChild($vnode);
       $newnode->setAttribute("desc", utf8_encode($inner_row['description']));
       $newnode->setAttribute("date", (substr($inner_row['datetext'],0,4) . '-' . substr($inner_row['datetext'],4,2) . '-' . substr($inner_row['datetext'],6)));
     }
