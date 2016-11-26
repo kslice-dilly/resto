@@ -1,3 +1,6 @@
 <Files "db_cred.*">
 deny from all
 </Files>
+<Files "db_cred*">
+deny from all
+</Files>
